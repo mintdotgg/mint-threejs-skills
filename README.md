@@ -39,9 +39,6 @@ npx skills add mintdotgg/mint-threejs-skills -a cursor -g -y
 npx skills add mintdotgg/mint-threejs-skills
 ```
 
-The targeted commands install globally without opening the agent picker. Use
-the final command to choose from all other supported agents.
-
 ### 2. Connect Mint MCP for 3D asset generation
 
 Go to [mcp.mint.gg](https://mcp.mint.gg/) and follow the instructions to
