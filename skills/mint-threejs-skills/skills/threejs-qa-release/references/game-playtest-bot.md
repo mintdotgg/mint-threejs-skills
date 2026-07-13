@@ -2,6 +2,10 @@
 
 Automated playtests drive the game through scripted real input and measure whether it actually plays: objective progression, player responsiveness, softlock windows, and error-free runtime. A game that renders beautifully but cannot be progressed by a scripted sweep is not release-ready. Use this for release-ready gameplay claims and difficulty/fairness verification; the canvas inspector proves the game renders, the bot proves it plays.
 
+Run the bot only after the user approves bot playtesting under
+`../../../references/verification-policy.md`; a general implementation or
+desktop smoke request does not authorize this longer QA pass.
+
 ## Prerequisites
 
 - `window.__THREE_GAME_DIAGNOSTICS__` publishing frame, score/objective, complete/fail state, and player position every update.

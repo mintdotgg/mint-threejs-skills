@@ -19,7 +19,8 @@ generalized for 3D apps while retaining deep game workflows.
   specialists.
 
 Both routes share visual systems, interaction, debugging, QA, and
-`references/mint-mcp-assets.md`.
+`references/mint-mcp-assets.md`. Projects that use Mint assets also use the
+durable registry in `references/asset-pipeline.md`.
 
 ## Invariants
 
@@ -29,13 +30,19 @@ Both routes share visual systems, interaction, debugging, QA, and
   Three.js-based stack when the project or user chooses it.
 - Mint MCP is the only generated-asset production pipeline. Keep MCP calls out
   of browser runtime code.
+- For every project that imports Mint files or remote world configuration,
+  maintain a project-root `mint-assets.json` through
+  `scripts/sync-mint-assets.mjs`. Reuse stable logical keys and preserve the
+  existing project's asset-root conventions.
 - Prefer discrete generated models and compose them in Three.js. Generate a
   Mint world only when the user explicitly chooses a generated environment;
   then read `references/mint-world-splats.md`.
 - Use procedural or user-provided assets when they are the right design choice
   or Mint MCP lacks the required capability.
-- Verify real interaction, rendering, responsive behavior, and changed risky
-  paths before reporting completion.
+- Before verification, read `references/verification-policy.md`. Run its
+  automatic minimum, ask before extended desktop/browser QA, and require a
+  separate secondary approval for mobile QA. Its approval boundary overrides
+  broader specialist completion gates.
 - Do not force game concepts such as objectives, pressure, rewards, or failure
   onto general 3D apps.
 

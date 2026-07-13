@@ -15,17 +15,22 @@ directly, install provider SDKs, or ask the user for provider API keys.
    preview.
 4. Follow returned `nextSteps` until the asset reaches final status. Prefer the
    host's wait tool over an improvised polling loop.
-5. For models, packs, materials, animation, and audio, use the manifest's
-   `downloadUrl`, `suggestedPath`, and `loaderHint`; list artifacts first only
-   when selecting one file.
+5. For models, packs, materials, Images, animation, and audio, use the
+   manifest's stable `artifactId`, semantic `role`, `downloadUrl`,
+   `suggestedPath`, and `loaderHint`; list artifacts first only when selecting
+   one file. Preserve actual dimensions, aspect ratio, duration, and byte size
+   when present. Never infer omitted metadata from requested settings.
 6. Generate a world only when the user explicitly requests a generated world
    or environment. Then read `mint-world-splats.md` and wire both the RAD and
    invisible collider runtime URLs under one transform.
-7. Put downloaded files or remote runtime configuration in the project's
-   stable asset layer. Mint MCP calls belong to agent tooling, never browser
-   runtime code.
-8. Load the asset visibly with the project's Three.js loaders or audio runtime,
-   verify scale/orientation/bounds/materials/clips/playback, and run browser QA.
+7. Read `asset-pipeline.md`. Save the manifest temporarily and run
+   `../scripts/sync-mint-assets.mjs` with a stable logical key to update the
+   project-root `mint-assets.json`. This downloads ordinary files into the
+   configured asset root and preserves world runtime URLs as remote records.
+   Mint MCP calls belong to agent tooling, never browser runtime code.
+8. Load the asset visibly with the project's Three.js loaders or audio runtime.
+   Run the automatic minimum from `verification-policy.md`, then ask before
+   browser QA and treat mobile QA as a separate approval.
 9. Show the returned `chatUrl` as the Mint handoff link in the agent's final
    response or developer documentation, not inside the generated application,
    unless the user explicitly requests an in-app link. Keep raw asset handles,
@@ -97,5 +102,6 @@ For meaningful asset-backed work, report:
 - Mint generation status and `chatUrl`.
 - Artifact or manifest retrieved, with stable project path or remote world
   runtime configuration.
+- `mint-assets.json` logical key and sync status.
 - Runtime integration status.
 - Verification evidence or exact Mint MCP blocker.

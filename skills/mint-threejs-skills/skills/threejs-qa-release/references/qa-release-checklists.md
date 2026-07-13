@@ -1,16 +1,16 @@
 # Three.js QA And Release
 
-Use before calling a Three.js app or game complete, premium, release-ready, or
-fixed.
+Use after the user approves the relevant extended QA scope. For the automatic
+minimum and approval boundary, follow `../../../references/verification-policy.md`.
 
-## Core Browser Matrix
+## Approved Desktop Browser Matrix
 
 - Dependencies and target build mode are known.
 - Build/typecheck passes and the intended dev or preview URL is open.
 - Console, page, and relevant network errors are captured.
 - Canvas display/drawing-buffer sizes are nonzero; pixel sampling is nonblank
   and visually varied.
-- Active desktop screenshot exists; mobile exists when in scope.
+- Active desktop screenshot exists.
 - Primary input changes visible application state.
 - Changed and risky paths are exercised.
 - UI text fit, overlap, safe areas, touch targets, and resize are checked.
@@ -18,6 +18,8 @@ fixed.
   animation, and disposal are checked as applicable.
 - Renderer diagnostics are captured when visual complexity changes.
 - Visual-harness decision is recorded when regression risk is meaningful.
+
+Do not add mobile to this matrix without separate mobile approval.
 
 ## Primary Journey
 
@@ -44,7 +46,8 @@ Shared checks:
 
 - Primary subject, controls, selected/configured state, loading/error state, and
   UI hierarchy are readable.
-- Composition works on desktop and mobile.
+- Composition works on the approved desktop viewport. Check mobile only after
+  separate mobile approval.
 - UI and VFX do not obscure important content or interaction affordances.
 - Imported assets have correct presentation and stable local paths, or an
   explicit remote RAD runtime path for Mint worlds.
@@ -68,7 +71,7 @@ When warranted:
 - Report baseline update/compare commands, paths, thresholds, masks, and flake
   risks.
 
-## Mobile And Input
+## Separately Approved Mobile And Input
 
 - Pointer capture, release, cancel, blur, and orientation changes cannot leave
   controls stuck.
@@ -106,6 +109,8 @@ When rendering, assets, physics, shaders, shadows, or post-processing change:
 
 ```text
 QA result:
+Automatic minimum:
+Approved extended scope:
 Commands and URL:
 Primary journey or game loop:
 Controls and viewports:
@@ -118,4 +123,5 @@ Visual harness:
 Game bot/physics/audio, when relevant:
 Issues fixed:
 Residual risks:
+Extended checks not run:
 ```

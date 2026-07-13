@@ -107,7 +107,9 @@ Changed or risky paths:
 Target viewports:
 Deployment constraints:
 
-Run production-oriented build and browser QA, active desktop/mobile checks,
-canvas evidence, core interaction, and loading/error paths. Games additionally
-check objective and fail/retry; run bot playtesting only when warranted.
+Run the production build and minimum non-browser verification first. Then
+propose a scoped desktop browser pass covering canvas evidence, core
+interaction, and loading/error paths, and wait for approval. After desktop QA,
+offer mobile as a separate secondary approval. Games additionally check
+objective and fail/retry; run bot playtesting only when separately approved.
 ```

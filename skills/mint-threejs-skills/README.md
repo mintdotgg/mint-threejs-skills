@@ -9,6 +9,11 @@ experience.
 It also teaches agents to render Mint-generated Gaussian-splat worlds with
 remote RAD streaming, aligned invisible collider meshes, and optional physics.
 
+Projects that import Mint assets receive a durable `mint-assets.json` registry.
+The bundled sync script downloads ordinary artifacts into a configurable asset
+root, keeps stable logical keys and media metadata, preserves local transforms,
+and records generated worlds as remote runtime configuration.
+
 ## Get Started
 
 ### 1. Install Mint Three.js Skills
@@ -69,6 +74,18 @@ Use Mint Three.js Skills (mint-threejs-skills) and Mint MCP to inspect this
 project, preserve its current stack, fix the interaction and rendering issues,
 and verify the changed user journey.
 ```
+
+## Verification Scope
+
+The skill runs a minimum viable non-browser check by default: the nearest
+build/typecheck gate, focused existing tests for changed logic, and local asset
+path validation. It then presents extended desktop/browser QA as an optional
+next step. Playwright, canvas inspection, screenshots, diagnostics, profiling,
+visual regression, and bot playtests are not automatic. Mobile QA is a separate
+secondary approval after desktop QA unless the request explicitly names both.
+
+When extended QA was not approved, the agent must say so rather than imply the
+result was browser-, mobile-, or release-tested.
 
 ## Acknowledgments
 

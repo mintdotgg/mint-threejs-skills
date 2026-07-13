@@ -4,6 +4,11 @@ Use this reference when a Three.js app or game warrants visual regression
 testing, baseline screenshots, repeated release checks, generated asset
 verification, or UI overlap/text-fit protection.
 
+Run this harness only after the user approves visual regression or screenshot
+baseline work under `../../../references/verification-policy.md`. Desktop QA
+approval alone does not authorize it, and mobile baselines require mobile
+approval.
+
 Do not add screenshot baselines for every prototype. Use a harness when the visual state is valuable enough to protect and deterministic enough to compare.
 
 Research basis: Playwright supports `expect(page).toHaveScreenshot()` for visual comparisons, device emulation for desktop/mobile projects, screenshot thresholds such as max diff pixels/ratio, and test artifacts/traces. Three.js exposes renderer diagnostics through `WebGLRenderer.info`. Existing canvas pixel checks are good smoke tests, but they do not replace screenshot baselines for polished screens.

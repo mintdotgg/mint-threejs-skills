@@ -33,8 +33,9 @@ and games.
    material identity, lighting hierarchy, atmosphere, then post-processing and
    VFX. Do not use a later layer to repair an unreadable earlier layer.
 4. Plan Mint MCP outputs and procedural systems. Store ordinary artifacts at
-   stable project paths; stream world RAD manifests through
-   `../../references/mint-world-splats.md`.
+   stable project paths and record them in the project-root `mint-assets.json`
+   through `../../references/asset-pipeline.md`; record and stream world RAD
+   manifests through `../../references/mint-world-splats.md`.
 5. Build authored forms, reusable factories, shared materials, detail systems,
    and simple interaction or collision proxies.
 6. Add lighting, shadows, fog, post-processing, and VFX only after the forms and

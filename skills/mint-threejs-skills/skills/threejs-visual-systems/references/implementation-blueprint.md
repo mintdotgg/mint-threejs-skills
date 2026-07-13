@@ -46,8 +46,10 @@ Use Mint MCP when generated model fidelity will materially improve the active sc
 For premium hero surfaces, procedural-only is not a valid final choice unless the user requested it, Mint MCP lacks the capability, generation/artifact retrieval is blocked, or the project is explicitly local-only. Repeated low-value props can stay procedural.
 
 Record each generated surface, Mint status and `chatUrl`, local artifact path
-or remote world runtime manifest, integration, and verification or blocker using
-`../../../references/mint-mcp-assets.md`.
+or remote world runtime manifest, stable `mint-assets.json` logical key,
+integration, and verification or blocker using
+`../../../references/mint-mcp-assets.md` and
+`../../../references/asset-pipeline.md`.
 
 ## Production Surfaces
 
