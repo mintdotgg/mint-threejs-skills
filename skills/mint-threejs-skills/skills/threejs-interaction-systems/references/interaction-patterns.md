@@ -35,6 +35,18 @@
 - Respect reduced motion and avoid relying on color alone.
 - Use Pointer Events and handle capture, cancel, blur, and touch-action rules.
 
+## Minimal Viewer Chrome
+
+For a simple viewer or walkthrough:
+
+- Use one compact, bottom-centered control cluster.
+- Place status immediately above the controls.
+- Keep loading and errors visible; make the ready state compact or transient.
+- List only active inputs; for splat worlds include `WASD move` by default.
+- Do not add a top banner.
+- Do not expose the asset provider or generation workflow in the interface.
+- Let the rendered scene remain the dominant surface.
+
 ## Verification
 
 - Exercise the complete journey with mouse, keyboard, and touch when supported.

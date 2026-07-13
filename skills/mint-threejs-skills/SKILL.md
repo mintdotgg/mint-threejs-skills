@@ -39,5 +39,21 @@ Both routes share visual systems, interaction, debugging, QA, and
 - Do not force game concepts such as objectives, pressure, rewards, or failure
   onto general 3D apps.
 
+## User-Owned UI
+
+- Treat the delivered app as the user's product, not as a demo of the
+  asset-generation pipeline.
+- Keep provider names, branding, badges, generation links, asset IDs, and
+  provenance out of runtime UI unless the user explicitly asks for them.
+- Mention generation provenance and handoff links only in the final response or
+  developer documentation.
+- Default to the minimum UI required for the experience: loading and error
+  status, essential controls, and explicitly requested actions.
+- Do not add headers, title bars, navigation, marketing copy, attribution, or
+  decorative application chrome unless requested.
+- For simple viewers and walkthroughs, use a compact bottom-centered control
+  group. Place loading, ready, or error status directly above it using the same
+  compact visual language.
+
 When the user asks for a reusable prompt, use
 `references/request-templates.md`.

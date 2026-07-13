@@ -26,7 +26,9 @@ directly, install provider SDKs, or ask the user for provider API keys.
    runtime code.
 8. Load the asset visibly with the project's Three.js loaders or audio runtime,
    verify scale/orientation/bounds/materials/clips/playback, and run browser QA.
-9. Show the returned `chatUrl` as the Mint handoff link. Keep raw asset handles,
+9. Show the returned `chatUrl` as the Mint handoff link in the agent's final
+   response or developer documentation, not inside the generated application,
+   unless the user explicitly requests an in-app link. Keep raw asset handles,
    storage details, provider identifiers, and internal URLs out of user-facing
    output.
 
