@@ -13,9 +13,34 @@ remote RAD streaming, aligned invisible collider meshes, and optional physics.
 
 ### 1. Install Mint Three.js Skills
 
+Choose your coding agent.
+
+#### Codex
+
+```bash
+npx skills add mintdotgg/mint-threejs-skills -a codex -g -y
+```
+
+#### Claude Code
+
+```bash
+npx skills add mintdotgg/mint-threejs-skills -a claude-code -g -y
+```
+
+#### Cursor
+
+```bash
+npx skills add mintdotgg/mint-threejs-skills -a cursor -g -y
+```
+
+#### Other coding agents
+
 ```bash
 npx skills add mintdotgg/mint-threejs-skills
 ```
+
+The targeted commands install globally without opening the agent picker. Use
+the final command to choose from all other supported agents.
 
 ### 2. Connect Mint MCP for 3D asset generation
 
