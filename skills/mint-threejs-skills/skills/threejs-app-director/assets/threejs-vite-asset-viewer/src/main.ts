@@ -89,7 +89,7 @@ class AssetViewerApp {
   private readonly loadingSurface = requiredElement<HTMLElement>("#loading-surface");
   private readonly loadingImage = requiredElement<HTMLImageElement>("#loading-image");
   private readonly loadingLabel = requiredElement<HTMLElement>("#loading-label");
-  private readonly detailsPanel = requiredElement<HTMLElement>("#details-panel");
+  private readonly detailsDialog = requiredElement<HTMLDialogElement>("#details-dialog");
   private readonly detailsToggle = requiredElement<HTMLButtonElement>("#details-toggle");
   private readonly detailsClose = requiredElement<HTMLButtonElement>("#details-close");
   private readonly assetKind = requiredElement<HTMLElement>("#asset-kind");
@@ -257,16 +257,34 @@ class AssetViewerApp {
   }
 
   private bindControls() {
-    const setDetailsOpen = (open: boolean) => {
-      this.app.classList.toggle("details-open", open);
-      this.detailsPanel.setAttribute("aria-hidden", String(!open));
-      this.detailsToggle.setAttribute("aria-expanded", String(open));
+    const syncDetailsState = () => {
+      this.detailsToggle.setAttribute(
+        "aria-expanded",
+        String(this.detailsDialog.open),
+      );
     };
+
     this.detailsToggle.addEventListener("click", () => {
-      setDetailsOpen(!this.app.classList.contains("details-open"));
+      if (this.detailsDialog.open) {
+        this.detailsDialog.close();
+      } else {
+        this.detailsDialog.showModal();
+        syncDetailsState();
+      }
     });
-    this.detailsClose.addEventListener("click", () => setDetailsOpen(false));
-    setDetailsOpen(true);
+    this.detailsClose.addEventListener("click", () => this.detailsDialog.close());
+    this.detailsDialog.addEventListener("close", syncDetailsState);
+    this.detailsDialog.addEventListener("click", (event) => {
+      if (event.target !== this.detailsDialog) return;
+      const bounds = this.detailsDialog.getBoundingClientRect();
+      const clickedOutside =
+        event.clientX < bounds.left ||
+        event.clientX > bounds.right ||
+        event.clientY < bounds.top ||
+        event.clientY > bounds.bottom;
+      if (clickedOutside) this.detailsDialog.close();
+    });
+    syncDetailsState();
 
     this.modelToolbar
       .querySelectorAll<HTMLButtonElement>("[data-render-mode]")

@@ -17,6 +17,14 @@ directly, install provider SDKs, or ask the user for provider API keys.
    preview.
 4. Follow returned `nextSteps` until the asset reaches final status. Prefer the
    host's wait tool over an improvised polling loop.
+   If a wait ends in failure, inspect `failureClass`, `failureCode`, safe
+   `failureReason`, optional `moderationCategories`, `retryable`, and
+   `retryGuidance`. Summarize moderation policy labels when present, but never
+   surface `workflowStageLastError`, stack traces, or internal paths. Use
+   `retry_generation` for a retryable standalone model or world so the
+   successor stays in the same Mint chat. A moderation failure requires a
+   changed prompt. Resolve quota or invalid input before retrying. Asset packs
+   keep their dedicated failed-item regeneration tool.
 5. For models, packs, materials, Images, animation, and audio, use the
    manifest's stable `artifactId`, semantic `role`, `downloadUrl`,
    `suggestedPath`, and `loaderHint`; list artifacts first only when selecting
@@ -25,6 +33,9 @@ directly, install provider SDKs, or ask the user for provider API keys.
    For material packs, preserve grouped item order while resolving each ready
    material through the live host's supported artifact path; do not pass the
    pack through the model asset-pack artifact lifecycle.
+   When the manifest includes role `preview_image`, synchronize it and map its
+   project-local path to the Asset Viewer `thumbnailUrl`. Never surface the raw
+   preview URL in visible UI or agent prose.
 6. Generate a world only when the user explicitly requests a generated world
    or environment. Then read `mint-world-splats.md` and wire both the RAD and
    invisible collider runtime URLs under one transform.

@@ -26,55 +26,61 @@
         id="details-toggle"
         class="icon-button details-toggle"
         type="button"
-        aria-controls="details-panel"
-        aria-expanded="true"
-        title="Toggle details"
+        aria-controls="details-dialog"
+        aria-expanded="false"
+        title="View asset details"
       >
         <span aria-hidden="true">i</span>
-        <span class="sr-only">Toggle details</span>
+        <span class="sr-only">View asset details</span>
       </button>
 
-      <aside id="details-panel" class="details-panel" aria-label="Asset details">
+      <dialog
+        id="details-dialog"
+        class="details-dialog"
+        aria-labelledby="asset-title"
+      >
         <header class="details-header">
           <div>
             <p id="asset-kind" class="eyebrow">3D asset</p>
             <h1 id="asset-title">Mint asset</h1>
           </div>
-          <button id="details-close" class="icon-button" type="button" title="Hide details">
+          <button id="details-close" class="icon-button" type="button" title="Close details">
             <span aria-hidden="true">×</span>
-            <span class="sr-only">Hide details</span>
+            <span class="sr-only">Close details</span>
           </button>
         </header>
 
-        <section id="animation-section" class="details-section" hidden>
-          <h2>Animations</h2>
-          <label class="select-label" for="animation-select">Selected clip</label>
-          <select id="animation-select"></select>
-          <div class="animation-player">
-            <button id="animation-previous" class="icon-button" type="button" title="Previous animation">‹</button>
-            <button id="animation-toggle" class="icon-button" type="button" title="Pause animation">Ⅱ</button>
-            <button id="animation-next" class="icon-button" type="button" title="Next animation">›</button>
-            <input id="animation-seek" type="range" min="0" max="1000" value="0" aria-label="Animation playhead" />
-          </div>
-        </section>
+        <div class="details-content">
+          <section id="animation-section" class="details-section" hidden>
+            <h2>Animations</h2>
+            <label class="select-label" for="animation-select">Selected clip</label>
+            <select id="animation-select"></select>
+            <div class="animation-player">
+              <button id="animation-previous" class="icon-button" type="button" title="Previous animation">‹</button>
+              <button id="animation-toggle" class="icon-button" type="button" title="Pause animation">Ⅱ</button>
+              <button id="animation-next" class="icon-button" type="button" title="Next animation">›</button>
+              <input id="animation-seek" type="range" min="0" max="1000" value="0" aria-label="Animation playhead" />
+            </div>
+          </section>
 
-        <section class="details-section">
-          <h2>Info</h2>
-          <dl id="metadata-list" class="metadata-list"></dl>
-        </section>
+          <section class="details-section">
+            <h2>Info</h2>
+            <dl id="metadata-list" class="metadata-list"></dl>
+          </section>
 
-        <section id="material-maps-section" class="details-section" hidden>
-          <h2>Maps</h2>
-          <div id="material-map-items" class="material-map-items"></div>
-        </section>
+          <section id="material-maps-section" class="details-section" hidden>
+            <h2>Maps</h2>
+            <div id="material-map-items" class="material-map-items"></div>
+          </section>
 
-        <section id="prompt-section" class="details-section" hidden>
-          <h2>Prompt</h2>
-          <p id="asset-prompt" class="prompt-copy"></p>
-        </section>
+          <section id="prompt-section" class="details-section" hidden>
+            <h2>Prompt</h2>
+            <p id="asset-prompt" class="prompt-copy"></p>
+          </section>
+        </div>
 
         <footer id="download-actions" class="download-actions"></footer>
-      </aside>
+      </dialog>
 
       <div class="viewer-bottom">
         <p id="status-line" class="status-line" aria-live="polite">Preparing viewer</p>

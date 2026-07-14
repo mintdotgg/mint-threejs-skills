@@ -96,7 +96,20 @@ try {
       manifestVersion: 1,
       source: { kind: "asset", assetType: "world", id: "world_1" },
       mintUrl: "https://mint.gg/example/world_1",
-      artifacts: [],
+      artifacts: [
+        {
+          id: "preview_image",
+          artifactId: "preview_image",
+          role: "preview_image",
+          kind: "asset_preview",
+          format: "webp",
+          filename: "world-preview.webp",
+          contentType: "image/webp",
+          downloadUrl: "https://cdn.mint.gg/world-preview.webp",
+          suggestedPath: "public/images/world-preview.webp",
+          loaderHint: "image",
+        },
+      ],
       integrationMode: "remote_stream",
       runtime: {
         artifactId: "world_runtime_rad",
@@ -120,14 +133,25 @@ try {
     projectDir,
     manifestPath: worldManifestPath,
     key: "courtyard",
-    fetchImpl: async () => {
-      throw new Error("remote worlds must not download");
-    },
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      arrayBuffer: async () => Uint8Array.from([9, 8, 7]).buffer,
+    }),
   });
   const finalRegistry = JSON.parse(await readFile(registryPath, "utf8"));
   assert.equal(finalRegistry.assets.courtyard.mode, "remote_stream");
   assert.equal(finalRegistry.assets.courtyard.runtime.artifactId, "world_runtime_rad");
   assert.equal(finalRegistry.assets.courtyard.runtime.collider.role, "physics_collider");
+  assert.equal(
+    finalRegistry.assets.courtyard.thumbnailUrl,
+    "public/assets/mint/courtyard/preview_image.webp",
+  );
+  assert.equal(
+    finalRegistry.assets.courtyard.artifacts.preview_image.role,
+    "preview_image",
+  );
 } finally {
   await rm(projectDir, { recursive: true, force: true });
 }

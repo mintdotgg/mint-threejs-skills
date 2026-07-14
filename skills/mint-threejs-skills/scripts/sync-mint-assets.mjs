@@ -364,6 +364,14 @@ function remoteWorldRecord(manifest) {
   };
 }
 
+function getThumbnailUrl(artifacts) {
+  const entries = Object.values(artifacts ?? {});
+  const preview = entries.find(
+    (artifact) => asRecord(artifact)?.role === "preview_image",
+  );
+  return asRecord(preview)?.localPath;
+}
+
 export async function syncMintAssets(options) {
   const projectDir = path.resolve(options.projectDir ?? process.cwd());
   const key = requireString(options.key, "--key");
@@ -398,7 +406,32 @@ export async function syncMintAssets(options) {
   let asset;
   let changedFiles = 0;
   if (manifest.integrationMode === "remote_stream") {
-    asset = { ...common, ...remoteWorldRecord(manifest) };
+    const manifestArtifacts = Array.isArray(manifest.artifacts)
+      ? manifest.artifacts
+      : [];
+    const downloaded = manifestArtifacts.length
+      ? await downloadArtifacts({
+          manifest,
+          projectDir,
+          assetRoot,
+          key,
+          fetchImpl: options.fetchImpl ?? globalThis.fetch,
+          previousAsset,
+          source,
+          force: options.force === true,
+        })
+      : { artifacts: {}, changedFiles: 0 };
+    changedFiles = downloaded.changedFiles;
+    asset = {
+      ...common,
+      ...remoteWorldRecord(manifest),
+      ...(Object.keys(downloaded.artifacts).length > 0
+        ? { artifacts: downloaded.artifacts }
+        : {}),
+      ...(getThumbnailUrl(downloaded.artifacts)
+        ? { thumbnailUrl: getThumbnailUrl(downloaded.artifacts) }
+        : {}),
+    };
   } else {
     const downloaded = await downloadArtifacts({
       manifest,
@@ -411,7 +444,14 @@ export async function syncMintAssets(options) {
       force: options.force === true,
     });
     changedFiles = downloaded.changedFiles;
-    asset = { ...common, mode: "local_files", artifacts: downloaded.artifacts };
+    asset = {
+      ...common,
+      mode: "local_files",
+      artifacts: downloaded.artifacts,
+      ...(getThumbnailUrl(downloaded.artifacts)
+        ? { thumbnailUrl: getThumbnailUrl(downloaded.artifacts) }
+        : {}),
+    };
   }
 
   const registry = {
@@ -426,7 +466,7 @@ export async function syncMintAssets(options) {
     key,
     mode: asset.mode,
     registryPath: registryLocation.relative,
-    artifactCount: asset.mode === "local_files" ? Object.keys(asset.artifacts).length : 0,
+    artifactCount: Object.keys(asset.artifacts ?? {}).length,
     changedFiles,
     registryChanged,
   };

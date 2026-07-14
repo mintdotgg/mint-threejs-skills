@@ -69,6 +69,7 @@ version.
         "scale": [1, 1, 1]
       },
       "mode": "local_files",
+      "thumbnailUrl": "public/assets/mint/hero/preview_image.webp",
       "artifacts": {
         "optimized_glb": {
           "artifactId": "optimized_glb",
@@ -90,13 +91,19 @@ Artifact records also preserve `byteSize`, actual Image `width`, `height`, and
 Unknown values stay omitted. Ordinary `downloadUrl` values and unrecognized
 provider or storage fields are not written to the project registry.
 
+When a manifest contains an artifact with role `preview_image`, the sync stores
+that file like any other image and copies its project-local path to the asset
+record's `thumbnailUrl`. Use that registry field for viewer loading states and
+carousels; do not persist the source preview URL.
+
 Animation manifests use their target type as `source.assetType` and retain the
 `rigged_character` or `animation_clip` role for each local file.
 
 ## Remote Worlds
 
 World manifests create a `mode: "remote_stream"` record instead of downloading
-RAD or collider files. The record preserves the Mint CDN-backed runtime and
+RAD or collider files. A `preview_image` artifact is still downloaded when
+present and becomes `thumbnailUrl`. The record preserves the Mint CDN-backed runtime and
 collider URLs, their artifact IDs and roles, SparkJS loader hints, byte size
 when known, and the same editable identity transform. Load both remote URLs
 under that one transform and keep the collider invisible.
@@ -105,6 +112,8 @@ under that one transform and keep the collider invisible.
 
 - For a single model, map one model artifact's browser URL into one
   `ModelAssetItem` in the packaged Asset Viewer scaffold.
+- Map the registry asset's `thumbnailUrl` to the viewer item or world
+  `thumbnailUrl`, converting the project-local path to a browser path.
 - For an asset pack, create one item per generated model and preserve the pack's
   stable item order. Point each item at its own registry logical key and local
   GLB path.

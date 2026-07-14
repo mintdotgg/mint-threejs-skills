@@ -67,11 +67,12 @@ requested asset into that project instead of scaffolding a separate viewer.
   status, essential controls, and explicitly requested actions.
 - Do not add headers, title bars, navigation, marketing copy, attribution, or
   decorative application chrome unless requested.
-- For the canonical asset viewer, use its compact details sidebar or mobile
-  drawer plus bottom-centered inspection controls. For other simple viewers and
-  walkthroughs, use a compact bottom-centered control group. Place loading,
-  ready, or error status directly above it using the same compact visual
-  language.
+- For the canonical asset viewer, keep the canvas dominant with a compact
+  centered details dialog opened from an info button plus bottom-centered
+  inspection controls. Do not reserve permanent sidebar space. For other simple
+  viewers and walkthroughs, use a compact bottom-centered control group. Place
+  loading, ready, or error status directly above it using the same compact
+  visual language.
 
 When the user asks for a reusable prompt, use
 `references/request-templates.md`.

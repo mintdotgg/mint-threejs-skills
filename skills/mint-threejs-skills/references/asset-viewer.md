@@ -56,6 +56,14 @@ For a greenfield delivery, create the packaged vanilla Three.js scaffold:
 python3 <mint-threejs-skills-root>/skills/threejs-app-director/scripts/create_threejs_asset_viewer.py ./my-asset-viewer
 ```
 
+The creator detects the surrounding package manager and writes or updates the
+matching `.claude/launch.json` entry. Use `--package-manager
+auto|npm|pnpm|yarn|bun` to control detection and `--port <number>` to choose the
+preferred Vite port. If that port is already declared or live, the creator uses
+the next available port and writes the same value to Vite and launch config.
+Invalid launch JSON stops before scaffolding. Do not introduce a second lockfile
+family into an existing workspace.
+
 Then:
 
 1. Complete the Mint lifecycle in `mint-mcp-assets.md`.
@@ -72,8 +80,8 @@ Then:
    substitute scene content.
 
 The canonical shell owns one renderer, scene, camera, animation loop, resize
-handler, loading surface, status line, details panel, and teardown path. Its
-scene session changes by manifest kind:
+handler, loading surface, status line, centered details dialog, and teardown
+path. Its scene session changes by manifest kind:
 
 - Model session: static model, animated model, or focused asset-pack item.
 - Material session: one PBR map set or focused material-pack item on the
@@ -86,6 +94,9 @@ Use only artifact metadata that Mint actually returned:
 
 - Convert Vite public-root filesystem paths into browser paths deliberately.
 - Preserve asset-pack item order and stable logical keys.
+- Map the synchronized registry record's `thumbnailUrl` to the viewer item or
+  world `thumbnailUrl`. It comes from a manifest artifact with role
+  `preview_image`; do not copy a raw preview CDN URL into the app.
 - Attach animation artifacts only to their target model item.
 - Use an animation artifact's local GLB path as `url`. For an embedded base-model
   clip, omit `url` and identify the clip by `clipName` when needed.
@@ -105,6 +116,15 @@ Use only artifact metadata that Mint actually returned:
 The viewer derives UI from its data. One item has no carousel. No clips means no
 animation controls. No material maps means no material-map section. No download
 means no download button. Materials and RAD worlds have no model mesh toolbar.
+
+Keep asset metadata on demand rather than reserving a sidebar. The top-corner
+info button opens one centered modal dialog containing the item title, real
+metadata, optional animation controls, material maps, prompt, and available
+downloads. Keep it closed by default so the canvas and asset remain the primary
+surface. Support the close button, Escape, and backdrop click; rely on native
+dialog focus containment and restore focus to the info trigger on close. The
+dialog must not move the camera framing or bottom inspection controls when it
+opens.
 
 Use the same model manifest shape for a single model, animated model, or pack:
 

@@ -179,39 +179,49 @@ input:focus-visible {
   border: 1px solid rgb(255 255 255 / 12%);
   box-shadow: 0 12px 32px rgb(0 0 0 / 18%);
   backdrop-filter: blur(18px);
-  transition: right 180ms ease;
 }
 
-.details-open .details-toggle {
-  right: calc(284px + max(16px, env(safe-area-inset-right)));
-}
-
-.details-panel {
-  position: absolute;
-  z-index: 11;
-  top: 12px;
-  right: 12px;
-  bottom: 12px;
-  display: flex;
-  width: 284px;
+.details-dialog {
+  width: min(460px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(78dvh, 680px);
+  margin: auto;
+  padding: 0;
   flex-direction: column;
-  overflow: hidden auto;
+  overflow: hidden;
   color: #edf1ed;
-  background: rgb(17 19 18 / 88%);
-  border: 1px solid rgb(255 255 255 / 11%);
-  border-radius: 16px;
-  box-shadow: 0 22px 70px rgb(0 0 0 / 28%);
-  backdrop-filter: blur(24px) saturate(1.15);
-  transform: translateX(calc(100% + 20px));
-  transition: transform 180ms ease;
+  background: rgb(17 19 18 / 94%);
+  border: 1px solid rgb(255 255 255 / 13%);
+  border-radius: 20px;
+  box-shadow: 0 30px 100px rgb(0 0 0 / 48%);
+  backdrop-filter: blur(28px) saturate(1.18);
 }
 
-.details-open .details-panel {
-  transform: translateX(0);
+.details-dialog[open] {
+  display: flex;
+  animation: details-dialog-in 180ms ease-out both;
+}
+
+.details-dialog::backdrop {
+  background: rgb(4 6 5 / 48%);
+  backdrop-filter: blur(5px);
+}
+
+@keyframes details-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.975);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .details-header {
   display: flex;
+  flex: none;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
@@ -234,6 +244,14 @@ input:focus-visible {
   font-weight: 620;
   line-height: 1.2;
   letter-spacing: -0.025em;
+}
+
+.details-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .details-section {
@@ -366,9 +384,15 @@ input:focus-visible {
 
 .download-actions {
   display: grid;
+  flex: none;
   gap: 8px;
-  margin-top: auto;
   padding: 16px 18px max(18px, env(safe-area-inset-bottom));
+  background: rgb(17 19 18 / 96%);
+  border-top: 1px solid rgb(255 255 255 / 8%);
+}
+
+.download-actions:empty {
+  display: none;
 }
 
 .download-button {
@@ -406,11 +430,6 @@ input:focus-visible {
   align-items: center;
   gap: 9px;
   pointer-events: none;
-  transition: padding-right 180ms ease;
-}
-
-.details-open .viewer-bottom {
-  padding-right: 296px;
 }
 
 .status-line {
@@ -544,30 +563,15 @@ input:focus-visible {
 }
 
 @media (max-width: 760px) {
-  .details-panel {
-    top: auto;
-    right: 8px;
-    bottom: 8px;
-    left: 8px;
-    width: auto;
-    max-height: min(62vh, 560px);
+  .details-dialog {
+    width: calc(100vw - 24px);
+    max-height: min(82dvh, 640px);
     border-radius: 18px;
-    transform: translateY(calc(100% + 16px));
   }
 
-  .details-open .details-panel {
-    transform: translateY(0);
-  }
-
-  .details-toggle,
-  .details-open .details-toggle {
+  .details-toggle {
     top: max(12px, env(safe-area-inset-top));
     right: max(12px, env(safe-area-inset-right));
-  }
-
-  .details-open .viewer-bottom {
-    opacity: 0;
-    pointer-events: none;
   }
 
   .viewer-bottom {
