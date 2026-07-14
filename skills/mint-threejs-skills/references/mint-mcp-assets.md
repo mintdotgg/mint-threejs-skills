@@ -7,7 +7,9 @@ directly, install provider SDKs, or ask the user for provider API keys.
 ## Workflow
 
 1. Write an asset plan. Prefer discrete models, coherent asset packs,
-   materials, and audio that can be composed in Three.js.
+   materials, material packs, and audio that can be composed in Three.js. When
+   the asset itself is the requested deliverable, read `asset-viewer.md` before
+   scaffolding UI.
 2. Confirm the live Mint MCP capabilities. Do not invent tool names, schemas,
    lifecycle stages, or downloadable formats.
 3. Start generation in the default automatic mode. Use review mode only when
@@ -20,6 +22,9 @@ directly, install provider SDKs, or ask the user for provider API keys.
    `suggestedPath`, and `loaderHint`; list artifacts first only when selecting
    one file. Preserve actual dimensions, aspect ratio, duration, and byte size
    when present. Never infer omitted metadata from requested settings.
+   For material packs, preserve grouped item order while resolving each ready
+   material through the live host's supported artifact path; do not pass the
+   pack through the model asset-pack artifact lifecycle.
 6. Generate a world only when the user explicitly requests a generated world
    or environment. Then read `mint-world-splats.md` and wire both the RAD and
    invisible collider runtime URLs under one transform.
@@ -36,6 +41,35 @@ directly, install provider SDKs, or ask the user for provider API keys.
    unless the user explicitly requests an in-app link. Keep raw asset handles,
    storage details, provider identifiers, and internal URLs out of user-facing
    output.
+
+## Generated Model Fidelity
+
+- Treat a successful generated model as presentation-ready. Render its geometry,
+  materials, textures, UVs, and topology as delivered unless the user explicitly
+  asks to change them.
+- Put descriptive adjectives such as fluffy, shiny, rusty, translucent, or
+  glowing into the generation prompt. Do not recreate those qualities with a
+  runtime shader or replacement material after generation succeeds.
+- Do not build or ship a procedural version of the same subject alongside a
+  successful Mint model.
+- Do not build a procedural stand-in before the generation lifecycle reaches a
+  terminal result. A clearly labeled placeholder is allowed only after a real
+  capability blocker or failed generation makes it useful.
+- Camera, neutral lighting, environment lighting, background, contact shadow,
+  bounds-based framing, and reversible mesh inspection modes are presentation
+  treatment. They must not permanently mutate or dispose the authored asset
+  materials.
+
+## Generated Material Fidelity
+
+- Treat a successful material as a presentation-ready PBR map set. Preview the
+  exact Base Color, Normal, Roughness, Metalness, and Height maps that Mint
+  returned.
+- Do not invent a missing map, synthesize browser-side replacements, recolor
+  Base Color, or reinterpret the material as a custom shader brief.
+- Texture color space, repeat, anisotropy, neutral lighting, preview geometry,
+  and reversible camera controls are presentation treatment. They must not
+  rewrite or overwrite the generated map files.
 
 ## Character Animation Sets
 
@@ -87,7 +121,9 @@ Natural requests that should trigger set discovery include:
   longer generation and post-processing lifecycle. Invoke it only when the
   user directly asks for a Mint-generated world or approves that choice.
 - Use user-provided assets or procedural Three.js/CSS/SVG/Canvas content when
-  the live Mint MCP host does not expose the required media capability.
+  the live Mint MCP host does not expose the required media capability or a
+  completed generation has actually failed. Label placeholders and remove them
+  when a real generated artifact becomes available.
 - Do not substitute another generation API when Mint MCP is unavailable or
   lacks a capability. Report the blocker and continue with clearly labeled
   local placeholders when that still produces useful progress.

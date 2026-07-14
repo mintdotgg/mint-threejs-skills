@@ -3,6 +3,28 @@
 Use these only when the user asks for a reusable prompt. Fill the context and
 acceptance criteria from the project; omit irrelevant sections.
 
+## Generated Asset Viewer
+
+```text
+Use mint-threejs-skills and Mint MCP to deliver this generated asset in the
+canonical vanilla Three.js Asset Viewer.
+
+Asset request:
+Single model, animated model, model asset pack, material, material pack, or
+explicit RAD world:
+Reference images or style constraints:
+Required downloads or metadata:
+
+Required outcome:
+- Treat the generated asset as the product and the viewer as its inspection shell.
+- Preserve generated model geometry, materials, and textures as delivered.
+- Use the canonical Asset Viewer scaffold and mint-assets.json registry.
+- Enable model mesh modes, animation controls, the model/material pack
+  carousel, material map inspection, or RAD navigation only when the delivered
+  asset data supports them.
+- Run the automatic non-browser verification minimum and report the Mint handoff.
+```
+
 ## General Three.js App
 
 ```text

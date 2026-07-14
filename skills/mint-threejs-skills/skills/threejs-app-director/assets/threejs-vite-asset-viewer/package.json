@@ -1,0 +1,20 @@
+{
+  "name": "threejs-vite-asset-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc && vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@sparkjsdev/spark": "2.1.0",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.13"
+  }
+}

@@ -1,6 +1,6 @@
 ---
 name: threejs-app-director
-description: "Build and upgrade general Three.js apps including model viewers, configurators, walkthroughs, simulations, visualizations, editors, showcases, and interactive experiences."
+description: "Build and upgrade general Three.js apps including model and material viewers, configurators, walkthroughs, simulations, visualizations, editors, showcases, and interactive experiences."
 ---
 
 # Three.js App Director
@@ -9,6 +9,10 @@ Own the complete non-game 3D application outcome. Do not invent game objectives,
 scoring, failure, or progression unless the experience genuinely needs them.
 
 Read `references/app-patterns.md` for the matching application archetype.
+For a fresh model, animation, asset-pack, material, material-pack, or Mint-world
+delivery whose asset is the requested product, read
+`../../references/asset-viewer.md` and start from the packaged Asset Viewer
+scaffold.
 For imported-model orientation, manipulation, simulation, terrain, or other
 spatially complex work, read `../../references/spatial-contracts.md`.
 
@@ -42,6 +46,20 @@ spatially complex work, read `../../references/spatial-contracts.md`.
 8. Follow `../../references/verification-policy.md`: run the automatic minimum,
    then offer a scoped desktop/browser QA pass. Treat mobile as a separate
    approval.
+
+## Asset Viewer Scaffold
+
+For a greenfield asset-delivery viewer, create the canonical vanilla Three.js
+project:
+
+```bash
+python3 <this-skill-dir>/scripts/create_threejs_asset_viewer.py ./my-asset-viewer
+```
+
+Use `--force` only when overwriting the target is intended. Configure
+`src/asset-manifest.ts` from the synchronized `mint-assets.json`; do not replace
+the scaffold's model, animation, material, pack, or RAD session with a bespoke
+scene unless the user requested a broader application.
 
 ## Completion Gates
 

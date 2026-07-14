@@ -2,14 +2,30 @@
 
 Choose the smallest architecture that supports the actual user journey.
 
-## Model Viewer Or Showcase
+## Asset Viewer Delivery
 
 - Center and frame content from bounds; do not assume provider scale.
 - Provide deliberate orbit/pan/zoom limits, reset view, loading progress, and
   unsupported/error states.
-- Support animation, material variants, annotations, fullscreen, capture, or AR
-  only when requested.
+- Use the canonical Asset Viewer scaffold for one generated model, an animated
+  model, a model asset pack, one material, a material pack, or one explicitly
+  requested Mint RAD world.
+- Derive UI from available data: omit the carousel for one item and animation
+  controls when no clips exist. Show material-map details only for materials
+  and model mesh modes only for models.
+- Preserve generated model materials by default. Material, solid, normal, and
+  wireframe inspection modes are presentation state, not asset edits.
+- Preview Mint materials as delivered map sets on the canonical tiled sphere;
+  do not replace their PBR maps with authored colors or shaders.
 - Keep presentation transforms separate from canonical asset transforms.
+
+## Model Showcase Or Product Viewer
+
+- Use this app route when the user asks for authored presentation, annotations,
+  configuration, storytelling, custom navigation, fullscreen, capture, AR, or
+  other experience behavior beyond asset inspection and download.
+- Keep the requested product journey primary; do not fall back to the canonical
+  Asset Viewer when a broader application was explicitly requested.
 
 ## Product Configurator
 

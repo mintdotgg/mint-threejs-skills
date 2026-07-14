@@ -101,6 +101,30 @@ collider URLs, their artifact IDs and roles, SparkJS loader hints, byte size
 when known, and the same editable identity transform. Load both remote URLs
 under that one transform and keep the collider invisible.
 
+## Asset Viewer Mapping
+
+- For a single model, map one model artifact's browser URL into one
+  `ModelAssetItem` in the packaged Asset Viewer scaffold.
+- For an asset pack, create one item per generated model and preserve the pack's
+  stable item order. Point each item at its own registry logical key and local
+  GLB path.
+- For animation artifacts, attach each semantic clip to its target model item.
+  Use the local animation GLB path as `url`; omit `url` for clips embedded in the
+  base model.
+- For one material, map every `materialMap` artifact to a `MaterialMapRecord`
+  using the artifact ID suffix as `mapType`. Use the local `maps_zip` archive as
+  `archiveDownloadUrl` when present.
+- For a material pack, preserve the grouped item order but synchronize each
+  ready material under its own stable registry key. Material packs share the
+  viewer carousel pattern; they do not become model asset packs in the registry
+  or generation lifecycle.
+- For a world, set the viewer manifest to `kind: "world"` and pass the registry's
+  remote RAD runtime and collider URLs. Do not turn those remote values into
+  public-root paths or download them into the project.
+- Convert registry filesystem paths to browser URLs deliberately. For a Vite
+  public root, `public/assets/mint/chair/original_glb.glb` becomes
+  `/assets/mint/chair/original_glb.glb`.
+
 ## Boundaries
 
 - Existing project architecture wins. Configure `assetRoot` instead of moving
