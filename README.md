@@ -1,18 +1,15 @@
 # Mint Three.js Skills
 
-Mint Three.js Skills helps coding agents build Three.js apps and games.
 
-It is designed as a companion to Mint MCP: Mint produces the assets, while the
-skill guides the agent in building, integrating, debugging, and verifying the
-experience.
+Mint Three.js Skills helps coding agents build 3D apps and games faster. It is
+designed as a companion to [Mint MCP](https://mcp.mint.gg/)
 
-It also teaches agents to render Mint-generated Gaussian-splat worlds with
-remote RAD streaming, aligned invisible collider meshes, and optional physics.
-
-Projects that import Mint assets receive a durable `mint-assets.json` registry.
-The bundled sync script downloads ordinary artifacts into a configurable asset
-root, keeps stable logical keys and media metadata, preserves local transforms,
-and records generated worlds as remote runtime configuration.
+<p>
+  <a href="https://play.mint.gg/vanguard-protocol"><img src="https://play.mint.gg/experience-assets/vanguard-protocol/social-card.webp" alt="Vanguard Protocol animated character roster" width="24%"></a>
+  <a href="https://play.mint.gg/helios-form"><img src="https://play.mint.gg/experience-assets/helios-form/social-card.webp" alt="Helios Form orbital vehicle showroom" width="24%"></a>
+  <a href="https://play.mint.gg/neon-relic"><img src="https://play.mint.gg/experience-assets/neon-relic/social-card.webp" alt="Neon Relic interactive science-fiction poster gallery" width="24%"></a>
+  <a href="https://play.mint.gg/impossible-places"><img src="https://play.mint.gg/experience-assets/impossible-places/social-card.webp" alt="Impossible Places interactive Gaussian-splat travel magazine" width="24%"></a>
+</p>
 
 ## Get Started
 
