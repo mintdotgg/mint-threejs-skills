@@ -37,6 +37,10 @@ durable registry in `references/asset-pipeline.md`.
 - Prefer discrete generated models and compose them in Three.js. Generate a
   Mint world only when the user explicitly chooses a generated environment;
   then read `references/mint-world-splats.md`.
+- When a splat world has slow first pixels, repeated downloads, packing stalls,
+  slow transitions, or expensive runtime updates, also read
+  `references/mint-world-splat-performance.md` and preserve its RAD-versus-
+  finite-asset boundary.
 - Use procedural or user-provided assets when they are the right design choice
   or Mint MCP lacks the required capability.
 - Before verification, read `references/verification-policy.md`. Run its

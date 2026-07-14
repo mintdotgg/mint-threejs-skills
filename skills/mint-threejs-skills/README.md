@@ -4,6 +4,10 @@
 Mint Three.js Skills helps coding agents build 3D apps and games faster. It is
 designed as a companion to [Mint MCP](https://mcp.mint.gg/)
 
+It also teaches agents to render Mint-generated Gaussian-splat worlds with
+remote RAD streaming, aligned invisible collider meshes, optional physics, and
+measured fast-loading patterns for project-owned finite splat assets.
+
 <p>
   <a href="https://play.mint.gg/vanguard-protocol"><img src="https://play.mint.gg/experience-assets/vanguard-protocol/social-card.webp" alt="Vanguard Protocol animated character roster" width="24%"></a>
   <a href="https://play.mint.gg/helios-form"><img src="https://play.mint.gg/experience-assets/helios-form/social-card.webp" alt="Helios Form orbital vehicle showroom" width="24%"></a>

@@ -8,6 +8,7 @@ are remote Gaussian-splat environments, not ordinary model downloads.
 - Runtime contract
 - Version requirements
 - Vanilla Three.js pattern
+- Loading and runtime performance
 - Transform and center heuristics
 - Default camera and navigation
 - CDN CORS and range requests
@@ -158,6 +159,21 @@ renderer.setAnimationLoop(() => {
 
 For RAD, use `paged: true`; do not add `lod: true` to `SplatMesh`. SPZ LoD
 still downloads the full source, while RAD paging is intended for large worlds.
+
+## Loading And Runtime Performance
+
+For slow first pixels, duplicate downloads, main-thread packing stalls,
+multi-world transitions, or expensive Spark updates, read
+`mint-world-splat-performance.md`. It contains the proven finite-SPZ preview
+pipeline: deterministic downsampling, offline `PackedSplats` snapshots,
+promise-coalesced bounded caches, progressive preview-to-full handoff,
+delayed adjacent-world prefetch, manual demand-render scheduling, hosting
+headers, cleanup, and measurement gates.
+
+Keep the runtime boundary explicit: remote Mint RAD continues to use paged
+range streaming. Do not replace RAD with an eager finite-file prefetch or local
+prepack. The preview/prepack path applies only when the project already owns or
+is explicitly allowed to derive finite SPZ/splat artifacts.
 
 ## Transform And Center Heuristics
 

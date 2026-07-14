@@ -126,6 +126,30 @@ Measure in production preview when user-facing performance matters.
 5. Re-measure the same scenario.
 6. Check visual/playability regression.
 
+## Gaussian-Splat Loading And Runtime Performance
+
+Read `../../../references/mint-world-splats.md` and
+`../../../references/mint-world-splat-performance.md`. In addition to the
+general measurements above, capture source/preview bytes and splat counts,
+preview and full fetch timing, preview-visible and full-visible timing,
+`SparkRenderer.activeSplats`, cold/warm behavior, duplicate URL requests,
+range traffic for RAD, cache entry counts, main-thread packing/sort stalls, and
+whether Spark updates have one owner.
+
+- Keep remote Mint RAD on paged range streaming; never full-prefetch it.
+- For project-owned finite SPZ/splat assets, prefer an offline prepacked preview
+  plus measured preview-to-full handoff over browser-time record packing.
+- Coalesce concurrent prefetch/live requests with cached promises, evict
+  rejected promises, bound the cache, and return fresh disposable Spark
+  wrappers around shared immutable snapshots.
+- Hide a preview only after the full mesh contributes useful active splats, not
+  merely when its initialization promise resolves.
+- Delay and constrain adjacent-world prefetch; cancel it on navigation and
+  skip it when network or memory policy says the work is wasteful.
+- In demand-rendered apps, guard manual Spark updates against overlap and run
+  them only after initialization or meaningful camera movement. Do not add a
+  second update owner to an always-rendered app.
+
 ## Preferred Optimizations
 
 - InstancedMesh for repeated detail.

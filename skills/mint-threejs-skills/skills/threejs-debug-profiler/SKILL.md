@@ -10,6 +10,11 @@ Find the owning cause or measured bottleneck before changing code.
 Read `references/debug-profile-checklists.md` for the applicable render,
 runtime, loading, mobile, audio, physics, or performance path.
 
+For Gaussian-splat loading or runtime cost, also read
+`../../references/mint-world-splats.md` and
+`../../references/mint-world-splat-performance.md` before changing the asset
+format, preload behavior, Spark update ownership, or LoD settings.
+
 ## Debug Workflow
 
 1. Reproduce in the correct build mode.

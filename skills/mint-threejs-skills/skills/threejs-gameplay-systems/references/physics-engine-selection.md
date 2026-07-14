@@ -148,6 +148,45 @@ const sensor = RAPIER.ColliderDesc.ball(1)
 - For arcade vehicles: do not rely on raw rigid-body simulation alone; combine kinematic/control logic with collision response.
 - For character controllers: prefer capsule colliders, locked rotations, and kinematic movement unless ragdoll behavior is required.
 
+## Directional Goal And Score Sensors
+
+A collision contact is not automatically a successful goal. For hoops, holes,
+gates, finish planes, catch zones, and similar objectives, define success as a
+separate semantic sensor over fixed-step simulation state.
+
+For a plane crossing, retain the previous and current body center and evaluate
+their signed distances `d0` and `d1` from the goal plane. Choose the plane
+normal so its positive side is the accepted side. Accept only that intended
+direction, then solve the exact crossing time within the step:
+
+```ts
+if (d0 <= 0 && d1 > 0) {
+  const t = -d0 / (d1 - d0)
+  crossing.copy(previous).lerp(current, t)
+}
+```
+
+Apply the objective's aperture or region test at `crossing`, not at the step's
+endpoint. Erode the valid region by the moving body's radius plus relevant
+boundary-proxy thickness so the complete body must fit; a center point slipping
+through an edge is not a valid success. Keep physical boundary colliders
+separate so they still produce bounce/contact behavior. Add an attempt-scoped
+duplicate guard and reset it only when a new attempt begins.
+
+Test at least:
+
+- intended-direction crossing inside the full-body opening
+- reverse-direction and already-past-plane motion
+- a grazing path whose center fits but body radius does not
+- a fast diagonal step whose endpoint is outside but interpolated crossing is
+  inside, plus the inverse case
+- duplicate crossings during the same attempt
+- maximum-speed contact against nearby boundary colliders without tunneling
+
+Expose the accepted crossing point, direction/velocity, interpolation fraction,
+effective aperture, and duplicate-guard state in diagnostics. This makes score
+bugs observable without making a test-only hook the source of truth.
+
 ## Verification Requirements
 
 For physics work, verify:
@@ -160,6 +199,10 @@ For physics work, verify:
 - High-speed movement does not tunnel.
 - Mobile/low-FPS frame spikes do not break simulation.
 - Physics diagnostics: engine used, body count, collider count, timestep, CCD bodies, sensors, collision groups, and risky colliders.
+- For directional objectives, a real-input attempt proves the score remains
+  unchanged before the accepted crossing and changes exactly once afterward.
+- Visual goal landmarks are measured against the authoritative colliders and
+  sensor plane using `../../../references/spatial-contracts.md`.
 
 ## Common Failures
 

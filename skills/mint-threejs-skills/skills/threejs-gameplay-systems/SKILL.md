@@ -14,7 +14,8 @@ controls.
 - New games, major loop changes, levels, encounters, progression, or difficulty:
   `references/game-design-level-design.md`.
 - Physics or collision-heavy work: `references/physics-engine-selection.md`.
-- Model axes, constrained motion, multiple moving actors, or terrain queries:
+- Model axes, constrained motion, multiple moving actors, terrain queries, or
+  imported interactive visuals that must align with colliders or sensors:
   `../../references/spatial-contracts.md`.
 - Feel, impact, juice, or polished gameplay: `references/game-feel.md`.
 - Before claiming broad gameplay complete: `references/quality-gates.md`.

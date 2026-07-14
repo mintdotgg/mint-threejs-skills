@@ -58,6 +58,37 @@ Games claiming premium quality additionally use
 primitive-dominant scenes, flat worlds, generic stat-card HUDs, repeated
 silhouettes, glow/fog hiding missing craft, and missing renderer evidence.
 
+## Interactive Asset And Physics Event Proof
+
+When a generated/imported visual represents a collider, sensor, target, goal,
+or other physics-critical affordance, verify both what the player sees and the
+simulation event it implies.
+
+- Expose the visual semantic landmarks and authoritative gameplay targets in
+  diagnostics using the same world/logical coordinate contract. For
+  camera-specific games, also report projected screen-space deltas and explicit
+  tolerances; see `../../../references/spatial-contracts.md`.
+- Assert the production asset loaded, the relevant fallback is inactive, and
+  the expected mesh/triangle/material budget is plausible before measuring
+  alignment.
+- Use a real pointer, keyboard, touch, or gamepad path for the primary proof.
+  Test hooks may freeze or inspect evidence states, but must not be the only way
+  the objective succeeds.
+- For a directional sensor, retain the fixed-step sample immediately before the
+  event and the accepted sample. Prove direction, interpolated crossing point,
+  effective full-body aperture, and one-attempt duplicate guard; see
+  `../../threejs-gameplay-systems/references/physics-engine-selection.md`.
+- Capture complementary evidence: a video of the real-input journey, stills on
+  both sides of the event boundary, and a machine-readable assertion report.
+  A still should show the score/state before the complete body crosses, and a
+  later still should show the changed score/state after it crosses.
+- If a headless compositor defect requires a capture-only safe mode, suppress
+  only decorative rendering. Do not change input, simulation, colliders,
+  sensors, scoring, camera, or asset transforms, and disclose the exact
+  suppression in the report.
+- Re-run the proof against the production preview or deployed URL when the
+  release path, asset hosting, or build mode could change behavior.
+
 ## Visual Regression
 
 When warranted:
@@ -102,6 +133,8 @@ When rendering, assets, physics, shaders, shadows, or post-processing change:
 - Mint MCP credentials, raw handles, and internal artifact URLs are absent from
   client code and built output.
 - Public assets load under static-host assumptions.
+- Physics-critical imported visuals retain their measured landmark alignment
+  in the production build and deployed camera/viewports.
 - Browser support, deployment command, artifact location, and risks are
   documented.
 

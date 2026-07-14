@@ -37,6 +37,34 @@ directly, install provider SDKs, or ask the user for provider API keys.
    storage details, provider identifiers, and internal URLs out of user-facing
    output.
 
+## Interactive And Camera-Critical Models
+
+When a generated model contains the feature a player aims at, collides with,
+enters, grabs, mounts, or activates, treat the gameplay camera and spatial
+contract as part of the production brief.
+
+1. State the expected up axis, forward/front direction, functional plane, floor
+   contact, completeness, and intended gameplay viewing angle in the prompt.
+   For a complete prop, explicitly reject floating, duplicated, disconnected,
+   intersecting, or background pieces.
+2. In review mode, inspect the preview from the target gameplay camera as well
+   as a neutral asset view. Reject a visually contaminated reference or a wrong
+   silhouette/pose before finalization; post-integration transforms cannot fix
+   baked topology.
+3. After download, measure canonical bounds and the semantic source-local
+   landmarks that gameplay needs. Do not assume the file origin or bounding-box
+   center is the interaction point.
+4. Normalize the asset once and align a presentation wrapper to authoritative
+   gameplay targets using `spatial-contracts.md`. Keep detailed Mint geometry
+   independent from simple collision proxies and semantic sensors.
+5. If an accepted model has one isolated mesh gap, distinguish it from a
+   transform error. Prefer regeneration for broad defects; otherwise a small,
+   measured, project-owned visual adapter may bridge the gap without changing
+   physics. Report its mesh/triangle budget and verify the gameplay-camera view.
+6. Expose asset loaded/fallback state, bounds/budget, and landmark deltas in
+   diagnostics. Verify both runtime loading and visible alignment before
+   reporting integration complete.
+
 ## Character Animation Sets
 
 Users do not need to know that curated animation sets exist. When a character
