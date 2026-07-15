@@ -72,18 +72,6 @@ project, preserve its current stack, fix the interaction and rendering issues,
 and verify the changed user journey.
 ```
 
-## Verification Scope
-
-The skill runs a minimum viable non-browser check by default: the nearest
-build/typecheck gate, focused existing tests for changed logic, and local asset
-path validation. It then presents extended desktop/browser QA as an optional
-next step. Playwright, canvas inspection, screenshots, diagnostics, profiling,
-visual regression, and bot playtests are not automatic. Mobile QA is a separate
-secondary approval after desktop QA unless the request explicitly names both.
-
-When extended QA was not approved, the agent must say so rather than imply the
-result was browser-, mobile-, or release-tested.
-
 ## Acknowledgments
 
 Mint Three.js Skills combines and adapts these open source skills. It is
