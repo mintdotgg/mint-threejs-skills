@@ -137,6 +137,13 @@ try {
   assert.equal(image.artifacts.image_file.localPath, "public/assets/mint/hero-portrait/image_file.png");
   assert.equal(image.artifacts.image_file.width, 2048);
   assert.equal(image.artifacts.image_file.aspectRatio, 16 / 9);
+  assert.deepEqual(image.source, {
+    manifestVersion: 1,
+    kind: "asset",
+    assetType: "image",
+    assetId: "image_1",
+  });
+  assert.equal(firstRegistryText.includes("mintUrl"), false);
   assert.equal(firstRegistryText.includes("downloadUrl"), false);
   assert.equal(firstRegistryText.includes("providerJobId"), false);
   assert.equal(firstRegistryText.includes("storageKey"), false);
@@ -145,6 +152,8 @@ try {
     [1, 2, 3, 4],
   );
 
+  delete imageManifest.mintUrl;
+  await writeFile(imageManifestPath, JSON.stringify(imageManifest));
   await syncMintAssets({ projectDir, manifestPath: imageManifestPath, key: "hero-portrait", fetchImpl });
   assert.equal(await readFile(registryPath, "utf8"), firstRegistryText);
   assert.equal(downloadCount, 1);
@@ -157,6 +166,24 @@ try {
     force: true,
   });
   assert.equal(downloadCount, 2);
+
+  const invalidManifestPath = path.join(projectDir, "invalid-manifest.json");
+  await writeFile(
+    invalidManifestPath,
+    JSON.stringify({
+      ...imageManifest,
+      source: { ...imageManifest.source, id: "" },
+    }),
+  );
+  await assert.rejects(
+    () => syncMintAssets({
+      projectDir,
+      manifestPath: invalidManifestPath,
+      key: "missing-source-id",
+      fetchImpl,
+    }),
+    /manifest\.source\.id is required/,
+  );
 
   const modelManifestPath = path.join(projectDir, "model-manifest.json");
   await writeFile(
@@ -287,6 +314,65 @@ try {
     finalRegistry.assets.courtyard.artifacts.preview_image.role,
     "preview_image",
   );
+
+  finalRegistry.assets.courtyard.source.mintUrl = "https://mint.gg/chat/legacy-chat";
+  finalRegistry.assets["missing-source-id"] = {
+    source: {
+      manifestVersion: 1,
+      kind: "asset",
+      assetType: "model",
+    },
+    transform: {
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1],
+    },
+    mode: "local_files",
+    artifacts: {},
+  };
+  await writeFile(registryPath, `${JSON.stringify(finalRegistry, null, 2)}\n`);
+  await assert.rejects(
+    () => syncMintAssets({
+      projectDir,
+      manifestPath: imageManifestPath,
+      key: "hero-portrait",
+      fetchImpl,
+    }),
+    /registry\.assets\.missing-source-id\.source\.assetId is required/,
+  );
+  delete finalRegistry.assets["missing-source-id"];
+  finalRegistry.assets.legacy = {
+    source: {
+      manifestVersion: 1,
+      kind: "asset",
+      assetType: "model",
+      assetId: "legacy_model_1",
+      chatUrl: "https://mint.gg/chat/legacy-model",
+      sourceUrl: "https://mint.gg/legacy-model",
+    },
+    transform: {
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1],
+    },
+    mode: "local_files",
+    artifacts: {},
+  };
+  await writeFile(registryPath, `${JSON.stringify(finalRegistry, null, 2)}\n`);
+  await syncMintAssets({ projectDir, manifestPath: imageManifestPath, key: "hero-portrait", fetchImpl });
+  const migratedRegistry = JSON.parse(await readFile(registryPath, "utf8"));
+  assert.deepEqual(migratedRegistry.assets.courtyard.source, {
+    manifestVersion: 1,
+    kind: "asset",
+    assetType: "world",
+    assetId: "world_1",
+  });
+  assert.deepEqual(migratedRegistry.assets.legacy.source, {
+    manifestVersion: 1,
+    kind: "asset",
+    assetType: "model",
+    assetId: "legacy_model_1",
+  });
 } finally {
   await rm(projectDir, { recursive: true, force: true });
 }

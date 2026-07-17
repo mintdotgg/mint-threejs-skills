@@ -64,8 +64,7 @@ version.
         "manifestVersion": 1,
         "kind": "asset",
         "assetType": "model",
-        "assetId": "...",
-        "mintUrl": "https://mint.gg/..."
+        "assetId": "..."
       },
       "transform": {
         "position": [0, 0, 0],
@@ -93,6 +92,13 @@ version.
   }
 }
 ```
+
+Persisted source records contain only `manifestVersion`, `kind`, `assetType`,
+and `assetId`. Mint MCP artifact-manifest responses may include `mintUrl` for
+an agent or user to open the asset in Mint, but the sync treats that URL as an
+ephemeral handoff and never writes it to `mint-assets.json`. Synchronizing an
+existing version 1 registry also removes legacy source URL fields from every
+record while preserving its asset IDs, transforms, and artifacts.
 
 Artifact records also preserve `byteSize`, actual Image `width`, `height`, and
 `aspectRatio`, and actual audio `durationSeconds` when Mint includes them.

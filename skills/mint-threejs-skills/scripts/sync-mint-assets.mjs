@@ -173,7 +173,20 @@ function sourceRecord(manifest) {
     kind,
     assetType,
     assetId: requireString(source.id, "manifest.source.id"),
-    mintUrl: requireHttpUrl(manifest.mintUrl, "manifest.mintUrl"),
+  };
+}
+
+function persistedSourceRecord(value, label) {
+  const source = asRecord(value);
+  if (!source) throw new Error(`${label}.source is required`);
+  if (source.manifestVersion !== 1) {
+    throw new Error(`${label}.source.manifestVersion must be 1`);
+  }
+  return {
+    manifestVersion: 1,
+    kind: requireString(source.kind, `${label}.source.kind`),
+    assetType: requireString(source.assetType, `${label}.source.assetType`),
+    assetId: requireString(source.assetId, `${label}.source.assetId`),
   };
 }
 
@@ -244,6 +257,7 @@ function normalizeRegistry(value) {
   if (registry.registryVersion !== REGISTRY_VERSION) {
     throw new Error(`Unsupported mint-assets registryVersion: ${registry.registryVersion}`);
   }
+  const assets = asRecord(registry.assets) ?? {};
   return {
     ...registry,
     registryVersion: REGISTRY_VERSION,
@@ -251,7 +265,19 @@ function normalizeRegistry(value) {
       typeof registry.assetRoot === "string" && registry.assetRoot
         ? registry.assetRoot
         : DEFAULT_ASSET_ROOT,
-    assets: asRecord(registry.assets) ?? {},
+    assets: Object.fromEntries(
+      Object.entries(assets).map(([key, value]) => {
+        const asset = asRecord(value);
+        if (!asset) throw new Error(`registry.assets.${key} must be an object`);
+        return [
+          key,
+          {
+            ...asset,
+            source: persistedSourceRecord(asset.source, `registry.assets.${key}`),
+          },
+        ];
+      }),
+    ),
   };
 }
 
