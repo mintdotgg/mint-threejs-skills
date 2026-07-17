@@ -71,11 +71,23 @@ class CreateThreejsAssetViewerTest(unittest.TestCase):
             viewer_styles = (target / "src" / "styles.css").read_text(
                 encoding="utf-8"
             )
+            gltf_runtime = (
+                target / "src" / "viewer" / "gltf-runtime.ts"
+            ).read_text(encoding="utf-8")
+            model_session = (
+                target / "src" / "viewer" / "model-session.ts"
+            ).read_text(encoding="utf-8")
+            world_session = (
+                target / "src" / "viewer" / "world-session.ts"
+            ).read_text(encoding="utf-8")
             self.assertIn('<dialog\n        id="details-dialog"', viewer_html)
             self.assertNotIn('<aside id="details-panel"', viewer_html)
             self.assertIn("this.detailsDialog.showModal()", viewer_main)
             self.assertIn(".details-dialog::backdrop", viewer_styles)
             self.assertNotIn(".details-open .viewer-bottom", viewer_styles)
+            self.assertIn("runtime/draco/gltf/three-0.184.0/", gltf_runtime)
+            self.assertIn("createMintGltfLoader()", model_session)
+            self.assertIn("createMintGltfLoader().loadAsync(colliderUrl)", world_session)
 
     def test_invalid_launch_file_stops_before_scaffolding(self):
         with tempfile.TemporaryDirectory() as temporary:

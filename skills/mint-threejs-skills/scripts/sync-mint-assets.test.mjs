@@ -2,7 +2,84 @@ import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { syncMintAssets } from "./sync-mint-assets.mjs";
+import { inspectGlbExtensions, syncMintAssets } from "./sync-mint-assets.mjs";
+
+function makeGlb(document) {
+  const jsonBytes = Buffer.from(JSON.stringify(document));
+  const padding = (4 - (jsonBytes.byteLength % 4)) % 4;
+  const jsonChunk = Buffer.concat([jsonBytes, Buffer.alloc(padding, 0x20)]);
+  const glb = Buffer.alloc(20 + jsonChunk.byteLength);
+  glb.write("glTF", 0, "ascii");
+  glb.writeUInt32LE(2, 4);
+  glb.writeUInt32LE(glb.byteLength, 8);
+  glb.writeUInt32LE(jsonChunk.byteLength, 12);
+  glb.writeUInt32LE(0x4e4f534a, 16);
+  jsonChunk.copy(glb, 20);
+  return glb;
+}
+
+const dracoGlb = makeGlb({
+  asset: { version: "2.0" },
+  extensionsUsed: ["KHR_draco_mesh_compression", "EXT_texture_webp"],
+  extensionsRequired: ["KHR_draco_mesh_compression", "VENDOR_unknown_required"],
+  meshes: [{ primitives: [{ extensions: { KHR_draco_mesh_compression: { bufferView: 0 } } }] }],
+});
+assert.deepEqual(inspectGlbExtensions(dracoGlb), {
+  extensionsUsed: ["EXT_texture_webp", "KHR_draco_mesh_compression"],
+  extensionsRequired: ["KHR_draco_mesh_compression", "VENDOR_unknown_required"],
+  usesDraco: true,
+  requiresDraco: true,
+  usesMeshopt: false,
+  requiresMeshopt: false,
+  usesKtx2: false,
+  requiresKtx2: false,
+  unknownRequiredExtensions: ["VENDOR_unknown_required"],
+});
+const supportedDracoGlb = makeGlb({
+  asset: { version: "2.0" },
+  extensionsUsed: ["KHR_draco_mesh_compression", "EXT_texture_webp"],
+  extensionsRequired: ["KHR_draco_mesh_compression"],
+  meshes: [{ primitives: [{ extensions: { KHR_draco_mesh_compression: { bufferView: 0 } } }] }],
+});
+assert.deepEqual(
+  inspectGlbExtensions(
+    makeGlb({
+      asset: { version: "2.0" },
+      extensionsUsed: [
+        "KHR_draco_mesh_compression",
+        "EXT_meshopt_compression",
+        "KHR_texture_basisu",
+      ],
+    }),
+  ),
+  {
+    extensionsUsed: [
+      "EXT_meshopt_compression",
+      "KHR_draco_mesh_compression",
+      "KHR_texture_basisu",
+    ],
+    extensionsRequired: [],
+    usesDraco: true,
+    requiresDraco: false,
+    usesMeshopt: true,
+    requiresMeshopt: false,
+    usesKtx2: true,
+    requiresKtx2: false,
+    unknownRequiredExtensions: [],
+  },
+);
+assert.deepEqual(inspectGlbExtensions(makeGlb({ asset: { version: "2.0" } })), {
+  extensionsUsed: [],
+  extensionsRequired: [],
+  usesDraco: false,
+  requiresDraco: false,
+  usesMeshopt: false,
+  requiresMeshopt: false,
+  usesKtx2: false,
+  requiresKtx2: false,
+  unknownRequiredExtensions: [],
+});
+assert.throws(() => inspectGlbExtensions(Buffer.from("not a GLB")), /glTF binary header/);
 
 const projectDir = await mkdtemp(path.join(os.tmpdir(), "mint-assets-sync-"));
 
@@ -80,6 +157,64 @@ try {
     force: true,
   });
   assert.equal(downloadCount, 2);
+
+  const modelManifestPath = path.join(projectDir, "model-manifest.json");
+  await writeFile(
+    modelManifestPath,
+    JSON.stringify({
+      manifestVersion: 1,
+      source: { kind: "asset", assetType: "model", id: "model_1" },
+      mintUrl: "https://mint.gg/example/model_1",
+      artifacts: [
+        {
+          id: "optimized_glb",
+          artifactId: "optimized_glb",
+          role: "canonical_model",
+          format: "glb",
+          filename: "hero-optimized.glb",
+          contentType: "model/gltf-binary",
+          byteSize: supportedDracoGlb.byteLength,
+          downloadUrl: "https://cdn.mint.gg/hero-optimized.glb",
+          loaderHint: "gltf",
+        },
+      ],
+    }),
+  );
+  await syncMintAssets({
+    projectDir,
+    manifestPath: modelManifestPath,
+    key: "hero-model",
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      arrayBuffer: async () => Uint8Array.from(supportedDracoGlb).buffer,
+    }),
+  });
+  const modelRegistry = JSON.parse(await readFile(registryPath, "utf8"));
+  const modelArtifact = modelRegistry.assets["hero-model"].artifacts.optimized_glb;
+  assert.equal(modelArtifact.usesDraco, true);
+  assert.equal(modelArtifact.requiresDraco, true);
+  assert.deepEqual(modelArtifact.extensionsRequired, [
+    "KHR_draco_mesh_compression",
+  ]);
+  assert.deepEqual(modelArtifact.unknownRequiredExtensions, []);
+  await assert.rejects(
+    () =>
+      syncMintAssets({
+        projectDir,
+        manifestPath: modelManifestPath,
+        key: "unsupported-model",
+        force: true,
+        fetchImpl: async () => ({
+          ok: true,
+          status: 200,
+          statusText: "OK",
+          arrayBuffer: async () => Uint8Array.from(dracoGlb).buffer,
+        }),
+      }),
+    /requires unsupported glTF extensions: VENDOR_unknown_required/,
+  );
 
   firstRegistry.assets["hero-portrait"].transform.position = [2, 0, -3];
   await writeFile(registryPath, `${JSON.stringify(firstRegistry, null, 2)}\n`);

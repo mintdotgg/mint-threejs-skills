@@ -5,6 +5,10 @@ runtime configuration from Mint MCP. The project owns the resulting
 `mint-assets.json`; Mint MCP remains the production source, and browser runtime
 code never calls MCP.
 
+Read `gltf-runtime-compatibility.md` before wiring any synchronized GLB. The
+sync records the file's runtime extension requirements; the browser loader must
+provide the matching capabilities.
+
 ## First Useful Workflow
 
 1. Choose a stable project key for the asset, such as `hero`, `courtyard`,
@@ -78,7 +82,11 @@ version.
           "contentType": "model/gltf-binary",
           "filename": "hero-optimized.glb",
           "localPath": "public/assets/mint/hero/optimized_glb.glb",
-          "loaderHint": "gltf"
+          "loaderHint": "gltf",
+          "extensionsUsed": ["KHR_draco_mesh_compression"],
+          "extensionsRequired": ["KHR_draco_mesh_compression"],
+          "usesDraco": true,
+          "requiresDraco": true
         }
       }
     }
@@ -90,6 +98,11 @@ Artifact records also preserve `byteSize`, actual Image `width`, `height`, and
 `aspectRatio`, and actual audio `durationSeconds` when Mint includes them.
 Unknown values stay omitted. Ordinary `downloadUrl` values and unrecognized
 provider or storage fields are not written to the project registry.
+
+For GLB artifacts, the sync reads the binary JSON chunk and records sorted
+`extensionsUsed` and `extensionsRequired` arrays. It also records the detected
+Draco, Meshopt, and KTX2 capability flags. A malformed GLB fails sync rather
+than producing a registry entry that cannot be verified.
 
 When a manifest contains an artifact with role `preview_image`, the sync stores
 that file like any other image and copies its project-local path to the asset
@@ -133,6 +146,8 @@ under that one transform and keep the collider invisible.
 - Convert registry filesystem paths to browser URLs deliberately. For a Vite
   public root, `public/assets/mint/chair/original_glb.glb` becomes
   `/assets/mint/chair/original_glb.glb`.
+- Create model, animation, and collider loaders through the shared helper in
+  `gltf-runtime-compatibility.md`; do not instantiate a bare `GLTFLoader`.
 
 ## Boundaries
 

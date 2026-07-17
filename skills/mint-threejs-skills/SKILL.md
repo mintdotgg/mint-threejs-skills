@@ -42,6 +42,9 @@ requested asset into that project instead of scaffolding a separate viewer.
   maintain a project-root `mint-assets.json` through
   `scripts/sync-mint-assets.mjs`. Reuse stable logical keys and preserve the
   existing project's asset-root conventions.
+- For every Three.js path that loads Mint-generated GLBs, read
+  `references/gltf-runtime-compatibility.md` and use a Draco-capable shared
+  loader. Mint-optimized GLBs are not compatible with a bare `GLTFLoader`.
 - Prefer discrete generated models and compose them in Three.js. Generate a
   Mint world only when the user explicitly chooses a generated environment;
   then read `references/mint-world-splats.md`.

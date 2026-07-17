@@ -48,6 +48,14 @@ bounds, texture dimensions, material count, animation clip names, and whether
 the final artifact was stored at a stable project path, or the Mint world RAD
 URL was intentionally wired as remote runtime configuration.
 
+Read the suite-level `references/gltf-runtime-compatibility.md`. For Draco,
+check the actual GLB `extensionsUsed` and `extensionsRequired`, confirm all
+model/animation/collider loaders attach the shared `DRACOLoader`, and request
+all three decoder files directly. Verify wildcard CORS, JavaScript/WASM MIME
+types, immutable versioned URLs, CSP worker/WASM allowances, and the absence of
+`No DRACOLoader instance provided`. When concurrent model and audio loads fail,
+confirm late progress callbacks cannot overwrite the first fatal error.
+
 ## Audio Loading And Playback
 
 Check:

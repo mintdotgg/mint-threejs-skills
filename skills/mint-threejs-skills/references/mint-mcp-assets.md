@@ -44,9 +44,12 @@ directly, install provider SDKs, or ask the user for provider API keys.
    project-root `mint-assets.json`. This downloads ordinary files into the
    configured asset root and preserves world runtime URLs as remote records.
    Mint MCP calls belong to agent tooling, never browser runtime code.
-8. Load the asset visibly with the project's Three.js loaders or audio runtime.
-   Run the automatic minimum from `verification-policy.md`, then ask before
-   browser QA and treat mobile QA as a separate approval.
+8. Before loading a GLB, read `gltf-runtime-compatibility.md`, inspect the
+   synchronized extension metadata, and use its shared Draco-capable loader for
+   models, animation files, and colliders. Then load the asset visibly with the
+   project's Three.js loaders or audio runtime. Run the automatic minimum from
+   `verification-policy.md`, ask before browser QA, and treat mobile QA as a
+   separate approval.
 9. Show the returned `chatUrl` as the Mint handoff link in the agent's final
    response or developer documentation, not inside the generated application,
    unless the user explicitly requests an in-app link. Keep raw asset handles,

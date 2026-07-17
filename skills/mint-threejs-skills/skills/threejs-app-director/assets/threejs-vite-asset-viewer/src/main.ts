@@ -4,6 +4,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { assetManifest } from "./asset-manifest";
+import { disposeMintGltfRuntime } from "./viewer/gltf-runtime";
 import { MaterialSession, materialMapLabel } from "./viewer/material-session";
 import { ModelSession } from "./viewer/model-session";
 import type {
@@ -812,6 +813,7 @@ class AssetViewerApp {
     window.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("beforeunload", this.onBeforeUnload);
     this.session?.dispose();
+    disposeMintGltfRuntime();
     this.scene.environment = null;
     this.environmentTexture?.dispose();
     this.controls.dispose();

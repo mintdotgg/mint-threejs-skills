@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import {
-  GLTFLoader,
   type GLTF,
+  type GLTFLoader,
 } from "three/addons/loaders/GLTFLoader.js";
 import { disposeObject3D, hasUsableBounds } from "./dispose";
+import { createMintGltfLoader } from "./gltf-runtime";
 import type {
   AnimationProgress,
   LoadedAnimation,
@@ -278,7 +279,7 @@ export class ModelSession implements ViewerSession {
     item: ModelAssetItem;
     callbacks: ModelSessionCallbacks;
   }) {
-    const loader = new GLTFLoader();
+    const loader = createMintGltfLoader();
     const gltf = await loader.loadAsync(input.item.glbUrl);
     const model = gltf.scene;
     try {

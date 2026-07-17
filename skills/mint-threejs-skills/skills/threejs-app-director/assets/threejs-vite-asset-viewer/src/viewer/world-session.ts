@@ -5,8 +5,8 @@ import {
   SplatMesh,
 } from "@sparkjsdev/spark";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { disposeObject3D, hasUsableBounds } from "./dispose";
+import { createMintGltfLoader } from "./gltf-runtime";
 import type { ViewerSession, WorldViewerManifest } from "./types";
 
 const WORLD_POSITION = new THREE.Vector3(0, 1.5, 0);
@@ -123,7 +123,7 @@ export class WorldSession implements ViewerSession {
     try {
       const results = await Promise.allSettled([
         splat.initialized,
-        new GLTFLoader().loadAsync(colliderUrl),
+        createMintGltfLoader().loadAsync(colliderUrl),
       ]);
       const splatResult = results[0];
       const colliderResult = results[1];

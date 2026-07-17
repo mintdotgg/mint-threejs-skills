@@ -54,15 +54,21 @@ Do not invent abstractions before the mechanics need them. Do extract duplicated
 
 ## Imported Generated 3D Assets And Animation
 
-When gameplay uses Mint-generated GLB/FBX assets:
+When gameplay uses Mint-generated GLB/FBX assets, first read the suite-level
+`references/gltf-runtime-compatibility.md`:
 
-- Load GLB assets with `GLTFLoader` from `three/addons/loaders/GLTFLoader.js`.
+- Load every Mint GLB through the packaged shared Draco-capable helper. Use the
+  same helper for models, animation GLBs, and colliders; never leave a bare
+  `GLTFLoader` path.
 - Keep imported model loading in the asset layer, not inside entity update loops.
 - Wrap imported scenes in game entities with explicit scale, bounds, collision proxy, and state hooks.
 - Use `AnimationMixer` for rigged/animated GLBs and update mixers with `deltaSeconds`.
 - Map gameplay states to clips: idle, walk/run, jump, attack/slash/shoot, hurt, fall, turn.
 - Decide whether root motion is used. For arcade games, prefer in-place animation and move the entity in code.
 - Keep simple collision proxies independent from the detailed imported mesh.
+- Latch the first fatal loading error and ignore later model/audio progress
+  callbacks until an explicit retry starts. Do not let concurrent progress
+  hide the failure.
 - Add fallback placeholders or loading states if an asset fails to load.
 - Report file size, clip names, approximate triangles, and texture count after import.
 

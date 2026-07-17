@@ -70,13 +70,16 @@ Then:
 2. Synchronize ordinary model, animation, and material files through
    `asset-pipeline.md`.
 3. Configure `src/asset-manifest.ts` from the resulting registry records.
-4. Keep one model as a one-item `kind: "model"` manifest. Use the same manifest
+4. Keep the packaged shared GLB runtime helper on every model, external
+   animation, and world-collider load path. Read
+   `gltf-runtime-compatibility.md` before changing it.
+5. Keep one model as a one-item `kind: "model"` manifest. Use the same manifest
    with several ordered items for an asset pack.
-5. Keep one material as a one-item `kind: "material"` manifest. Use the same
+6. Keep one material as a one-item `kind: "material"` manifest. Use the same
    manifest with several ordered items for a material pack.
-6. Configure an explicitly generated world as `kind: "world"` with its remote
+7. Configure an explicitly generated world as `kind: "world"` with its remote
    RAD and collider runtime values.
-7. Remove placeholder comments and unavailable capability fields. Do not add
+8. Remove placeholder comments and unavailable capability fields. Do not add
    substitute scene content.
 
 The canonical shell owns one renderer, scene, camera, animation loop, resize

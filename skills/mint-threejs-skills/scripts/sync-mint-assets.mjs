@@ -21,6 +21,36 @@ const IDENTITY_TRANSFORM = {
   rotation: [0, 0, 0],
   scale: [1, 1, 1],
 };
+const GLB_JSON_CHUNK = 0x4e4f534a;
+const GLTF_RUNTIME_EXTENSIONS = {
+  draco: "KHR_draco_mesh_compression",
+  meshopt: ["EXT_meshopt_compression", "KHR_meshopt_compression"],
+  ktx2: "KHR_texture_basisu",
+};
+const THREE_GLTF_LOADER_EXTENSIONS = new Set([
+  "KHR_draco_mesh_compression",
+  "KHR_lights_punctual",
+  "KHR_materials_anisotropy",
+  "KHR_materials_clearcoat",
+  "KHR_materials_dispersion",
+  "KHR_materials_emissive_strength",
+  "KHR_materials_ior",
+  "KHR_materials_iridescence",
+  "KHR_materials_sheen",
+  "KHR_materials_specular",
+  "KHR_materials_transmission",
+  "KHR_materials_unlit",
+  "KHR_materials_volume",
+  "KHR_mesh_quantization",
+  "KHR_meshopt_compression",
+  "KHR_texture_basisu",
+  "KHR_texture_transform",
+  "EXT_materials_bump",
+  "EXT_mesh_gpu_instancing",
+  "EXT_meshopt_compression",
+  "EXT_texture_avif",
+  "EXT_texture_webp",
+]);
 
 function usage() {
   return `
@@ -229,6 +259,109 @@ function stableObject(record) {
   return Object.fromEntries(Object.entries(record).sort(([left], [right]) => left.localeCompare(right)));
 }
 
+function stringArray(value) {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.filter((entry) => typeof entry === "string" && entry.trim()).map((entry) => entry.trim()))]
+    .sort((left, right) => left.localeCompare(right));
+}
+
+function documentUsesExtension(document, extensionName) {
+  const stack = [document];
+  const visited = new Set();
+  while (stack.length > 0) {
+    const value = stack.pop();
+    if (!value || typeof value !== "object" || visited.has(value)) continue;
+    visited.add(value);
+    if (Array.isArray(value)) {
+      stack.push(...value);
+      continue;
+    }
+    const record = asRecord(value);
+    if (!record) continue;
+    const extensions = asRecord(record.extensions);
+    if (extensions && Object.hasOwn(extensions, extensionName)) return true;
+    stack.push(...Object.values(record));
+  }
+  return false;
+}
+
+export function inspectGlbExtensions(input, label = "GLB") {
+  const bytes = Buffer.from(input);
+  if (bytes.byteLength < 20 || bytes.toString("ascii", 0, 4) !== "glTF") {
+    throw new Error(`${label} is missing the glTF binary header`);
+  }
+  if (bytes.readUInt32LE(4) !== 2) throw new Error(`${label} must use glTF binary version 2`);
+  const declaredLength = bytes.readUInt32LE(8);
+  if (declaredLength !== bytes.byteLength) {
+    throw new Error(`${label} declares ${declaredLength} bytes but contains ${bytes.byteLength}`);
+  }
+
+  let document;
+  let offset = 12;
+  while (offset + 8 <= bytes.byteLength) {
+    const chunkLength = bytes.readUInt32LE(offset);
+    const chunkType = bytes.readUInt32LE(offset + 4);
+    const chunkStart = offset + 8;
+    const chunkEnd = chunkStart + chunkLength;
+    if (chunkEnd > bytes.byteLength) throw new Error(`${label} contains a truncated GLB chunk`);
+    if (chunkType === GLB_JSON_CHUNK && document === undefined) {
+      const json = bytes
+        .toString("utf8", chunkStart, chunkEnd)
+        .replace(/[\u0000\u0020]+$/, "");
+      try {
+        document = JSON.parse(json);
+      } catch (error) {
+        throw new Error(`${label} contains invalid glTF JSON: ${error instanceof Error ? error.message : error}`);
+      }
+    }
+    offset = chunkEnd;
+  }
+  if (!asRecord(document)) throw new Error(`${label} does not contain a JSON chunk`);
+
+  const extensionsUsed = stringArray(document.extensionsUsed);
+  const extensionsRequired = stringArray(document.extensionsRequired);
+  const uses = (extension) =>
+    extensionsUsed.includes(extension) ||
+    extensionsRequired.includes(extension) ||
+    documentUsesExtension(document, extension);
+  const requires = (extension) => extensionsRequired.includes(extension);
+  const usesAny = (extensions) => extensions.some((extension) => uses(extension));
+  const requiresAny = (extensions) => extensions.some((extension) => requires(extension));
+
+  return {
+    extensionsUsed,
+    extensionsRequired,
+    usesDraco: uses(GLTF_RUNTIME_EXTENSIONS.draco),
+    requiresDraco: requires(GLTF_RUNTIME_EXTENSIONS.draco),
+    usesMeshopt: usesAny(GLTF_RUNTIME_EXTENSIONS.meshopt),
+    requiresMeshopt: requiresAny(GLTF_RUNTIME_EXTENSIONS.meshopt),
+    usesKtx2: uses(GLTF_RUNTIME_EXTENSIONS.ktx2),
+    requiresKtx2: requires(GLTF_RUNTIME_EXTENSIONS.ktx2),
+    unknownRequiredExtensions: extensionsRequired.filter(
+      (extension) => !THREE_GLTF_LOADER_EXTENSIONS.has(extension),
+    ),
+  };
+}
+
+function isGlbArtifact(artifact) {
+  const format = typeof artifact.format === "string" ? artifact.format.toLowerCase() : "";
+  const contentType =
+    typeof artifact.contentType === "string" ? artifact.contentType.toLowerCase() : "";
+  const filename = typeof artifact.filename === "string" ? artifact.filename.toLowerCase() : "";
+  return format === "glb" || contentType === "model/gltf-binary" || filename.endsWith(".glb");
+}
+
+function withGlbCompatibility(entry, artifact, bytes, label) {
+  if (!isGlbArtifact(artifact)) return entry;
+  const compatibility = inspectGlbExtensions(bytes, label);
+  if (compatibility.unknownRequiredExtensions.length > 0) {
+    throw new Error(
+      `${label} requires unsupported glTF extensions: ${compatibility.unknownRequiredExtensions.join(", ")}`,
+    );
+  }
+  return { ...entry, ...compatibility };
+}
+
 async function writeIfChanged(file, contents) {
   if ((await exists(file)) && Buffer.compare(await readFile(file), contents) === 0) return false;
   await mkdir(path.dirname(file), { recursive: true });
@@ -286,7 +419,7 @@ async function downloadArtifacts(input) {
       const previousByteSize = optionalNumber(previousArtifact.byteSize);
       const expectedByteSize = knownByteSize ?? previousByteSize;
       if (expectedByteSize === undefined || expectedByteSize === onDiskSize) {
-        entries[artifactId] = copyKnownMetadata(
+        const entry = copyKnownMetadata(
           { ...artifact, byteSize: knownByteSize ?? onDiskSize },
           {
             artifactId,
@@ -297,6 +430,12 @@ async function downloadArtifacts(input) {
             localPath: destination.relative,
             loaderHint: requireString(artifact.loaderHint, `loaderHint for ${artifactId}`),
           },
+        );
+        entries[artifactId] = withGlbCompatibility(
+          entry,
+          artifact,
+          await readFile(destination.absolute),
+          artifact.filename,
         );
         continue;
       }
@@ -313,7 +452,7 @@ async function downloadArtifacts(input) {
     const bytes = Buffer.from(await response.arrayBuffer());
     if (await writeIfChanged(destination.absolute, bytes)) changedFiles += 1;
 
-    entries[artifactId] = copyKnownMetadata(
+    const entry = copyKnownMetadata(
       { ...artifact, byteSize: knownByteSize ?? bytes.byteLength },
       {
         artifactId,
@@ -324,6 +463,12 @@ async function downloadArtifacts(input) {
         localPath: destination.relative,
         loaderHint: requireString(artifact.loaderHint, `loaderHint for ${artifactId}`),
       },
+    );
+    entries[artifactId] = withGlbCompatibility(
+      entry,
+      artifact,
+      bytes,
+      artifact.filename,
     );
   }
 
